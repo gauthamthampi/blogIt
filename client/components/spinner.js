@@ -2,7 +2,7 @@
 export default function LoadingSpinner() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="loader">remote add origin git@github.com:gauthamthampi/blogIt.git</div>
+        <div className="loader"></div>
         <style jsx>{`
           .loader {
             border: 8px solid rgba(0, 0, 0, 0.1);

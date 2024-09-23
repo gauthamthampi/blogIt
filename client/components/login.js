@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { localhost } from '../url';
+import LoadingSpinner from './spinner';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ export default function Login() {
       if (response.status === 200) {
         console.log('Login successful');
         localStorage.setItem('tokenblogIt', response.data.token);
-        window.location.href = '/dashboard'; // Change as needed
+        window.location.href = '/home'; 
       }
     } catch (err) {
       if (err.response) {
@@ -42,8 +43,10 @@ export default function Login() {
       <div className="w-full max-w-sm p-8 space-y-6 bg-white rounded-lg shadow-md border border-[#734b6d]">
         <h2 className="text-2xl font-bold text-center text-[#734b6d]">Login</h2>
         {error && <p className="text-red-500 text-center">{error}</p>}
-        {loading && <p className="text-center">Loading...</p>}
-        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
+        {loading &&  <div className="flex items-center justify-center mt-2">
+                <div className="loader mr-2"></div>
+                <LoadingSpinner />
+              </div>} {/* Show spinner when loading */}        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
           <input
             id="email"
             name="email"

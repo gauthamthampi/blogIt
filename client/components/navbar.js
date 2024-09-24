@@ -15,7 +15,6 @@ export default function Navbar() {
       try {
         const decodedToken = jwtDecode(token);
         const email = decodedToken.email;
-
         const fetchUserData = async () => {
           try {
             const response = await axios.get(`${localhost}/api/user/${email}`, {
@@ -24,13 +23,12 @@ export default function Navbar() {
               },
             });
             setUser(response.data); 
-            console.log(response.data);
-            
+            console.log(response.data);            
           } catch (err) {
             console.error('Failed to fetch user data', err);
             if (err.response?.status === 401 && err.response.data.message === 'Token expired, please log in again') {
-              localStorage.removeItem('tokenblogIt'); // Clear token
-              window.location.href = '/login'; // Redirect to login page
+              localStorage.removeItem('tokenblogIt'); 
+              window.location.href = '/login'; 
             }
           }
         };
@@ -68,12 +66,12 @@ export default function Navbar() {
                <button
                   onClick={() => window.location.href = '/myblogs'}
                 >
-                <span className="text-white font-bold px-4 hover:bg-[#5e3f6a]  rounded-md">
+                <span className="text-white font-bold px-4 py-2 hover:bg-[#5e3f6a]  rounded-md">
                   {user.firstname}
                 </span></button>
                 <button
                   onClick={handleLogout}
-                  className="text-white hover:bg-[#5e3f6a] px-4  rounded-md"
+                  className="text-white hover:bg-[#5e3f6a] px-4 py-2 rounded-md"
                 >
                   Logout
                 </button>

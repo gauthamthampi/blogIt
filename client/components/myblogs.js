@@ -8,16 +8,18 @@ export default function MyBlogs() {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState('');
-  const [currentBlogId, setCurrentBlogId] = useState(null); 
+  const [currentBlogId, setCurrentBlogId] = useState(null);
+  const [blogToDelete, setBlogToDelete] = useState(null); 
   const token = localStorage.getItem('tokenblogIt');
+  
   useEffect(() => {
-   
     if (token) {
       const decodedToken = jwtDecode(token); 
       setEmail(decodedToken.email); 
@@ -33,7 +35,6 @@ export default function MyBlogs() {
         },
       });
       setBlogs(response.data);
-      console.log('Blogs API response:', response.data);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching user blogs:', error);
@@ -44,15 +45,14 @@ export default function MyBlogs() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
-    const token = localStorage.getItem('tokenblogIt');
+
     const formData = new FormData();
     formData.append('title', title);
     formData.append('content', content);
     formData.append('image', image);
     formData.append('writtenby', email); 
     formData.append('createdAt', new Date().toISOString());
-  
+
     try {
       let response;
       if (currentBlogId) {
@@ -62,8 +62,7 @@ export default function MyBlogs() {
             'Content-Type': 'multipart/form-data',
           },
         });
-        // setBlogs(blogs.map(blog => (blog._id === currentBlogId ? response.data : blog)));
-        fetchUserBlogs()
+        fetchUserBlogs();
       } else {
         response = await axios.post(`${localhost}/api/addblog`, formData, {
           headers: {
@@ -71,35 +70,45 @@ export default function MyBlogs() {
             'Content-Type': 'multipart/form-data',
           },
         });
-        // setBlogs([...blogs, response.data]);
-        fetchUserBlogs()
+        fetchUserBlogs();
       }
       resetForm();
       setShowModal(false);
-      console.log("Blog submitted successfully");
     } catch (err) {
       console.error('Error submitting blog:', err);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
-  
+
   const resetForm = () => {
     setTitle('');
     setContent('');
     setImage(null);
     setImagePreview(null);
-    setCurrentBlogId(null); 
+    setCurrentBlogId(null);
   };
 
   const handleEdit = (blog) => {
     setTitle(blog.title);
     setContent(blog.content);
     setImagePreview(`${localhost}${blog.image}`);
-    setImage(null); 
     setCurrentBlogId(blog._id); 
     setShowModal(true);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${localhost}/api/deleteblog/${blogToDelete._id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      fetchUserBlogs();
+      setShowDeleteModal(false); 
+    } catch (error) {
+      console.error('Error deleting blog:', error);
+    }
   };
 
   const handleImageChange = (e) => {
@@ -146,16 +155,21 @@ export default function MyBlogs() {
                   <p className="mt-2 text-gray-600">
                     {blog.content ? blog.content.slice(0, 60) : 'No content available'}...
                   </p>
-                  <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => handleEdit(blog)}>
-                    Edit
-                  </button>
+                  <div className="mt-4 flex space-x-2">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg" onClick={() => handleEdit(blog)}>
+                      Edit
+                    </button>
+                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg" onClick={() => {setBlogToDelete(blog); setShowDeleteModal(true);}}>
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </>
       )}
-
+ 
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -227,15 +241,36 @@ export default function MyBlogs() {
                 </button>
                 <button
                   type="submit"
-                  className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${
-                    isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
+                  className={`bg-blue-500 text-white px-4 py-2 rounded-lg ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Submitting...' : currentBlogId ? 'Update' : 'Submit'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-2xl font-bold mb-4">Delete Blog</h2>
+            <p>Are you sure you want to delete this blog titled <strong>{blogToDelete?.title}</strong>? This action cannot be undone.</p>
+            <div className="flex justify-end mt-4">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-2"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

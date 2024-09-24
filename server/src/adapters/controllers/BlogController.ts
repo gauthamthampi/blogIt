@@ -3,16 +3,17 @@ import { Blog } from '../../domain/entities/Blog';
 import { CreateBlog } from '../../use_cases/blogs/CreateBlog';
 import { FetchAllBlog } from '../../use_cases/blogs/FetchAllBlog';
 import { FetchUserBlog } from '../../use_cases/blogs/FetchUserBlog';
-import { UpdateBlog} from '../../use_cases/blogs/EditBlog'; // Import the use case
-
+import { UpdateBlog} from '../../use_cases/blogs/EditBlog';
+import { FetchSingleBlog } from '../../use_cases/blogs/FetchSingleBlog';
 import jwt from 'jsonwebtoken'
 
 export class BlogController {
   constructor(
     private createBlog: CreateBlog,
     private updateBlog: UpdateBlog,
-    private fetchAllBlogs: FetchAllBlog ,
-    private fetchUserBlogs: FetchUserBlog
+    private fetchAllBlogs: FetchAllBlog,
+    private fetchUserBlogs: FetchUserBlog,
+    private fetchSingleBlogs: FetchSingleBlog
   ) {}
 
   async CreateBlog(req: Request, res: Response): Promise<void | Response> {
@@ -49,15 +50,15 @@ export class BlogController {
       const email = decoded.email; 
 
       const { title, content } = req.body;
-      const image = req.file ? `/uploads/${req.file.filename}` : undefined; // Optional image update
+      const image = req.file ? `/uploads/${req.file.filename}` : undefined; 
 
-      const blogId = req.params.id; // Blog ID from the URL
+      const blogId = req.params.id; 
 
       const blogUpdateData = {
         title,
         content,
         image,
-        writtenby: email, // Ensure the user is the author
+        writtenby: email, 
       };
 
       await this.updateBlog.execute(blogId, blogUpdateData);
@@ -67,8 +68,6 @@ export class BlogController {
       return res.status(400).json({ message: error.message });
     }
   }
-
-  
 
   async FetchAllBlogs(req: Request, res:Response): Promise<void | Response> {
     try{
@@ -91,4 +90,17 @@ export class BlogController {
       return res.status(400).json({ message: error.message });  
     }
   }
+
+  async FetchSingleBlog(req: Request, res:Response): Promise<void | Response>{
+    try{
+      const token = req.headers.authorization?.split(' ')[1]; 
+      if (!token) throw new Error('Token not provided');
+      const decoded: any = jwt.verify(token, 'jwtsecret'); 
+      const id = req.params.id      
+      const blog = await this.fetchSingleBlogs.execute(id)
+      return res.status(201).json(blog)
+     }catch(error:any){
+      return res.status(400).json({ message: error.message });  
+     }
+  } 
 }

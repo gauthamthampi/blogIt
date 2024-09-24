@@ -38,5 +38,7 @@ export class BlogRepositoryMongo {
   async deleteBlogbyId(id: string): Promise<IBlogDocument | null>{
     return await BlogModel.findByIdAndDelete(id)
   }
-
+ 
 }
+
+

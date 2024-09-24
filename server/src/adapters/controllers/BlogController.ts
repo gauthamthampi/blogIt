@@ -5,6 +5,7 @@ import { FetchAllBlog } from '../../use_cases/blogs/FetchAllBlog';
 import { FetchUserBlog } from '../../use_cases/blogs/FetchUserBlog';
 import { UpdateBlog} from '../../use_cases/blogs/EditBlog';
 import { FetchSingleBlog } from '../../use_cases/blogs/FetchSingleBlog';
+import { DeleteBlog } from '../../use_cases/blogs/DeleteBlog';
 import jwt from 'jsonwebtoken'
 
 export class BlogController {
@@ -13,7 +14,8 @@ export class BlogController {
     private updateBlog: UpdateBlog,
     private fetchAllBlogs: FetchAllBlog,
     private fetchUserBlogs: FetchUserBlog,
-    private fetchSingleBlogs: FetchSingleBlog
+    private fetchSingleBlogs: FetchSingleBlog,
+    private deleteblog: DeleteBlog,
   ) {}
 
   async CreateBlog(req: Request, res: Response): Promise<void | Response> {
@@ -30,11 +32,8 @@ export class BlogController {
       if (!image) {
         return res.status(400).json({ message: 'Image is required' }); 
       }
-
       const blog = new Blog(title, content, image, writtenby, createdAt);
-
       await this.createBlog.execute(blog);
-
       return res.status(201).json({ message: 'Blog created successfully' });  
     } catch (error: any) {
       return res.status(400).json({ message: error.message });  
@@ -62,7 +61,6 @@ export class BlogController {
       };
 
       await this.updateBlog.execute(blogId, blogUpdateData);
-   
       return res.status(201).json();  
     } catch (error: any) {
       return res.status(400).json({ message: error.message });
@@ -103,4 +101,17 @@ export class BlogController {
       return res.status(400).json({ message: error.message });  
      }
   } 
+
+  async DeleteBlog(req: Request, res:Response): Promise<void | Response>{
+    try{
+      const token = req.headers.authorization?.split(' ')[1]; 
+      if (!token) throw new Error('Token not provided');
+      const decoded: any = jwt.verify(token, 'jwtsecret'); 
+      const id = req.params.id      
+      await this.deleteblog.execute(id)
+      return res.status(201).json({message:'Blog Deleted Successfully'})
+    }catch(error: any){
+      return res.status(400).json({message: error.message})
+    }
+  }  
 }

@@ -76,7 +76,7 @@ export default function Login() {
         </form>
         <div className="flex justify-center mt-4">
           <p className="text-sm">
-            Don't have an account?{' '}
+           Don&apos;t have an account?
             <Link href="/signup" className="text-orange-600 hover:underline">
               Signup
             </Link>

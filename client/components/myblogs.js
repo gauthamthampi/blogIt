@@ -54,9 +54,8 @@ export default function MyBlogs() {
     formData.append('createdAt', new Date().toISOString());
 
     try {
-      let response;
       if (currentBlogId) {
-        response = await axios.put(`${localhost}/api/editblog/${currentBlogId}`, formData, {
+        await axios.put(`${localhost}/api/editblog/${currentBlogId}`, formData, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',
@@ -64,7 +63,7 @@ export default function MyBlogs() {
         });
         fetchUserBlogs();
       } else {
-        response = await axios.post(`${localhost}/api/addblog`, formData, {
+        await axios.post(`${localhost}/api/addblog`, formData, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data',

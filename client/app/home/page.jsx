@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import Navbar from '../../components/navbar';
 import BlogHome from '../../components/home'
 import LoadingSpinner from '../../components/spinner';
-import Home from '../page';
 
 export default function LoginPage() {
   const router = useRouter();

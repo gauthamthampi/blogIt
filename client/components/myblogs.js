@@ -146,7 +146,7 @@ export default function MyBlogs() {
               {blogs.map((blog) => (
                 <div key={blog._id} className="bg-white rounded-lg shadow-lg p-4">
                   <img
-                    src={`${localhost}${blog.image}`}
+                    src={blog.aws ? blog.aws : `${localhost}${blog.image}`}
                     alt={blog.title}
                     className="w-full h-48 object-cover rounded-lg"
                   />

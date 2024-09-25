@@ -3,10 +3,9 @@ import path from 'path';
 import fs from 'fs';
 import { Request } from 'express';
 
-// Modify the uploads directory to be at the root level, outside of the 'src' directory
-const uploadsDir = path.join(__dirname, '../../uploads');  // Goes two levels up to reach the root directory
+const uploadsDir = path.join(__dirname, '../../uploads');  
 if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir);  // Create the 'uploads' directory if it doesn't exist
+  fs.mkdirSync(uploadsDir); 
 }
 
 declare global {
@@ -28,9 +27,9 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
   if (file.mimetype.startsWith('image/')) {
-    cb(null, true);  // Accept the file if it's an image
+    cb(null, true);  
   } else {
-    cb(null, false);  // Reject the file if it's not an image
+    cb(null, false);  
     req.fileValidationError = 'Invalid file type. Only images are allowed!';
   }
 };

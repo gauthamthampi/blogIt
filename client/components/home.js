@@ -55,7 +55,7 @@ export default function BlogHome() {
               <div className="w-full h-full bg-gray-200">
                 <img
                   className="object-cover w-full h-full"
-                  src={`${localhost}${blog.image}`}
+                  src={blog.aws ? blog.aws : `${localhost}${blog.image}`}
                   alt={blog.title}
                 />
               </div>

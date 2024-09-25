@@ -63,7 +63,7 @@ const Article = () => {
         <div className="max-w-screen-xl mx-auto p-5 sm:p-8 md:p-12 relative">
             <div className="bg-no-repeat bg-center h-auto text-center overflow-hidden">
                 <img
-                    src={`${localhost}${blog.image}`}
+                    src={blog.aws ? blog.aws : `${localhost}${blog.image}`}
                     alt="Blog"
                     className="mx-auto h-96 w-full object-cover"
                 />

@@ -91,7 +91,7 @@ export default function MyBlogs() {
   const handleEdit = (blog) => {
     setTitle(blog.title);
     setContent(blog.content);
-    setImagePreview(`${localhost}${blog.image}`);
+    setImagePreview(blog.aws ? blog.aws : `${localhost}${blog.image}`);
     setCurrentBlogId(blog._id); 
     setShowModal(true);
   };

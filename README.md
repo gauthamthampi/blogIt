@@ -18,5 +18,5 @@ Ensure you have the following installed on your machine:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/gauthamthampi/trello-todo.git
-cd trello-todo
+git clone https://github.com/gauthamthampi/blogIt.git
+cd blogIt
